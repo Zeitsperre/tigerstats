@@ -11,8 +11,7 @@ SELECT
 	st_Area(st_Envelope(geom)) AS boundbox_area,
 	st_Area(geom) / st_area(st_Envelope(geom)) AS rect_area_fraction
 INTO RAF
-FROM counties
-WHERE "NAME" LIKE '%Hamilton%';
+FROM counties;
 
 -- Query 2: The ratio of the area to the area of the smallest circle that can enclose the area;
 
@@ -23,8 +22,7 @@ SELECT
 	st_AREA(st_MinimumBoundingCircle(geom)) AS min_circle_area, 
 	st_Area(geom)/st_Area(st_MinimumBoundingCircle(geom)) AS area_mincircle_ratio 
 INTO circle_boundary
-FROM counties
-WHERE "NAME" LIKE '%Hamilton%';
+FROM counties;
 
 -- Query 3: The ratio of the area to the area of a circle with the same perimeter;
 
@@ -36,8 +34,7 @@ SELECT
 	st_Area(st_Buffer(st_Centroid(geom),(st_Perimeter(geom)/(2*PI())))) AS perimcircle_area,
 	st_Area(geom)/st_Area(st_Buffer(st_Centroid(geom),(st_Perimeter(geom)/(2*PI())))) AS area_perimcircle_ratio
 INTO circle_perim_eq
-FROM counties
-WHERE "NAME" LIKE '%Hamilton%';
+FROM counties;
 
 -- Query 4: The ratio of the area's perimeter to that of a circle with the same area as the area;
 
@@ -50,8 +47,7 @@ SELECT
 	st_Area(geom)/st_Area(st_Buffer(st_Centroid(geom),(sqrt(st_Area(geom)/PI())))) AS area_areacircle_ratio,
 	st_Perimeter(geom)/st_Perimeter(st_Buffer(st_Centroid(geom),(sqrt(st_Area(geom)/PI())))) AS perimeter_areacircle_ratio
 INTO circle_area_eq
-FROM counties
-WHERE "NAME" LIKE '%Hamilton%';
+FROM counties;
 
 -- Query 5: The ratio of the area to the area of its convex hull, the convex ratio;
 
@@ -64,4 +60,5 @@ SELECT
 	st_Area(geom)/st_Area(st_ConvexHull(geom)) AS convexhull_area_ratio
 INTO hulls
 FROM counties
-WHERE "NAME" LIKE '%Hamilton%';
+
+;
