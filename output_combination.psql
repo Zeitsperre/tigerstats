@@ -8,22 +8,20 @@ SELECT
 	counties.countyfp AS countyfp,
 	counties.aland AS aland,
 	counties.awater AS awater,
-	st_area(counties.geom) AS calc_area,
-	raf.bounbox_area AS boundbox_area,
-	raf.rect_area_function AS rect_area_fraction,
-	bound_circle.boundcircle_area AS boundcircle_area,
-	bound_circle.area_boundcircle_ratio AS boundcircle_ratio,
+	raf.calc_area AS calc_area,
+	raf.boundbox_area AS boundbox_area,
+	raf.rect_area_fraction AS rect_area_fraction,
+	circle_boundary.boundcircle_area AS boundcircle_area,
+	circle_boundary.area_boundcircle_ratio AS boundcircle_ratio,
 	circle_perim_eq.perimeter AS perimeter,
 	circle_perim_eq.perimcircle_area AS perimcircle_area,
 	circle_perim_eq.area_perimcircle_ratio As perimcircle_ratio,
 	circle_area_eq.areacircle_area AS areacircle_area,
 	circle_area_eq.area_areacircle_ratio AS areacircle_ratio,
 	hulls.convexhull_area AS convexhull_area,
-	hulls.area_convexhull_ratio AS convexhull_ratio
+	hulls.convexhull_area_ratio AS convexhull_ratio
 INTO county_metrics
 FROM
-	counties, raf, bound_circle, circle_perim_eq, circle_area_eq, hulls
-WHERE statefp < '60'
-AND gid <> 2392;
+	counties, raf, circle_boundary, circle_perim_eq, circle_area_eq, hulls;
 
 -- ALL QUERIES REQUIRE OPTIMIZATION/REVISION FOR RESOURCE USE
