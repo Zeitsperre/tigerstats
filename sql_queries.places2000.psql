@@ -6,7 +6,7 @@
 -- Query 0: Extract values from Census 2000 places shapefile 
 
 DROP TABLE IF EXISTS analysis;
-SELECT name, gid, state, placefp place, lsad_trans lsad, area, perimeter, st_transform(geom, 5070) geom 
+SELECT name, gid, state, plc place, lsad_trans lsad, area, perimeter, st_transform(geom, 5070) geom 
 INTO analysis
 FROM places_2000
 WHERE state < '60';
