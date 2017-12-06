@@ -9,13 +9,15 @@ def include(filename):
     if os.path.exists(filename): 
         execfile(filename)
 
-def listShapefiles(mypath, shapefiles):
+def listShapefiles(mypath):
+    filepath=[]
     for filename in os.listdir(mypath):
         if filename.endswith(".shp"):
-            filepath = mypath + '/' + filename
-            shapefiles.append(filepath)
+            shapefile = mypath + '/' + filename
+            filepath.append(shapefile)
+    return filepath
 
-def psqlCredentials():
+def psqlCredentials(cred):
     dbname = str(raw_input('Enter Database Name: '))
     user = str(raw_input('Enter Postgres Username: '))
     passwd = str(getpass.getpass('Enter Password: '))
@@ -23,47 +25,54 @@ def psqlCredentials():
             "dbname": dbname,
             "user": user,
             "passwd": passwd
-            }
-    )
-
-include('exec_file.py')
-include('psycopg2_connection.py')
-
-mypath = os.path.dirname(os.path.realpath( __file__ ))
-shapefiles=[]
-listShapefiles(mypath,shapefiles)
-
-print '\n', shapefiles, '\n'
+            })
+    return cred
 
 
+def psqlInitialize():
+    include('exec_file.py')
+    include('psycopg2_connection.py')
 
-initconn = pg2.connect(host = 'localhost', user='postgres', password='password')
-initconn.set_session(autocommit = True)
+    mypath = os.path.dirname(os.path.realpath( __file__ ))
+    shapefiles = []
+    shapefiles.append(listShapefiles(mypath))
 
-initconn.cursor().execute('DROP DATABASE psycopg2;')
+    print("The following shapefiles have been read from the working directory")
+    print(shapefiles)
 
+    cred={}
+    cred.update(psqlCredentials(cred))
+    createdb = str("host = 'localhost', user='{user}', password='{passwd}'").format(**cred)
+    print(createdb)
 
-try:
-    initconn.cursor().execute('CREATE DATABASE psycopg2;')
-    print "CREATED DATABASE PSYCOPG2. Continuing..."
-except Exception:
-    print "DATABASE PSYCOPG2 already exists. Continuing..."
-    pass
-initconn.close()
+    initconn = pg2.connect(createdb)
+    initconn.set_session(autocommit = True)
 
-conn = pg2.connect(host = 'localhost', dbname = 'psycopg2', user='postgres', password='password')
-conn.set_session(autocommit = True)
-cur = conn.cursor()
+    initconn.cursor().execute('DROP DATABASE psycopg2;')
 
-try:
-    cur.execute('CREATE EXTENSION postgis;')
-    print "CREATED EXTENSION POSTGIS. Continuing..."
-except Exception:
-    print "EXTENSION POSTGIS already exists. Continuing..."
-    pass
+    try:
+        initconn.cursor().execute('CREATE DATABASE psycopg2;')
+        print ("CREATED DATABASE PSYCOPG2. Continuing...")
+    except Exception:
+            print("DATABASE PSYCOPG2 already exists. Continuing...")
+            pass
+    initconn.close()
 
-#cur.execute('SELECT st_centroid(geom) FROM counties')
-#print cur.fetchone()[0]
-conn.close()
+    createPGIS = "host = 'localhost', dbname = '{dbname}', user='{user}', password='{passwd}'".format(cred)
+    conn = pg2.connect(createPGIS)
+    conn.set_session(autocommit = True)
+    cur = conn.cursor()
 
+    try:
+        cur.execute('CREATE EXTENSION postgis;')
+        print("CREATED EXTENSION POSTGIS. Continuing...")
+    except Exception:
+        print("EXTENSION POSTGIS already exists. Continuing...")
+        pass
 
+    #cur.execute('SELECT st_centroid(geom) FROM counties')
+    #print cur.fetchone()[0]
+    conn.close()
+
+if __name__ == "__main__":
+    psqlInitialize()

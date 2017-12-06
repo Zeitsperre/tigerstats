@@ -46,3 +46,5 @@ def psql_analysis(script):
     # columns as a dictionary (hash) in the next example.
     pprint.pprint(records)
  
+    
+    
