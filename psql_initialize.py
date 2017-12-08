@@ -5,35 +5,34 @@ import os
 import psycopg2 as pg2
 import getpass
 
-def include(filename):
-    if os.path.exists(filename): 
-        execfile(filename)
+def include(script):
+    if os.path.exists(script): 
+        execfile(script)
 
-def listShapefiles(mypath):
+def listShapefiles(args):
     filepath=[]
-    for filename in os.listdir(mypath):
+    for filename in os.listdir(args):
         if filename.endswith(".shp"):
-            shapefile = mypath + '/' + filename
+            shapefile = args + '/' + filename
             filepath.append(shapefile)
     return filepath
 
-def psqlCredentials(cred):
+def psqlCredentials(args):
     dbname = str(raw_input('Enter Database Name: '))
     user = str(raw_input('Enter Postgres Username: '))
     passwd = str(getpass.getpass('Enter Password: '))
-    cred = ({
+    args = ({
             "dbname": dbname,
             "user": user,
             "passwd": passwd
             })
-    return cred
-
+    return args
 
 def psqlInitialize():
     include('exec_file.py')
     include('psycopg2_connection.py')
 
-    mypath = os.path.dirname(os.path.realpath( __file__ ))
+    mypath = os.path.dirname(os.path.realpath( __file__ )) + "/data"
     shapefiles = []
     shapefiles.append(listShapefiles(mypath))
 
@@ -47,18 +46,19 @@ def psqlInitialize():
 
     initconn = pg2.connect(createdb)
     initconn.set_session(autocommit = True)
-
-    initconn.cursor().execute('DROP DATABASE psycopg2;')
+    setupcur = initconn.cursor()
+    
+    setupcur.execute('DROP DATABASE psycopg2;')
 
     try:
-        initconn.cursor().execute('CREATE DATABASE psycopg2;')
+        setupcur.execute('CREATE DATABASE psycopg2;')
         print ("CREATED DATABASE PSYCOPG2. Continuing...")
     except Exception:
-            print("DATABASE PSYCOPG2 already exists. Continuing...")
-            pass
+        print("DATABASE PSYCOPG2 already exists. Continuing...")
+        pass
     initconn.close()
 
-    createPGIS = "host = 'localhost', dbname = '{dbname}', user='{user}', password='{passwd}'".format(cred)
+    createPGIS = "host = 'localhost', dbname = '{dbname}', user='{user}', password='{passwd}'".format(**cred)
     conn = pg2.connect(createPGIS)
     conn.set_session(autocommit = True)
     cur = conn.cursor()

@@ -1,14 +1,15 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 19 23:04:20 2017
+Example adapted from @Azeirah (CC-BY-SA) 
+https://stackoverflow.com/questions/19472922/reading-external-sql-script-in-python
 """
 
 def executeScriptsFromFile(filename):
     # Open and read the file as a single buffer
-    infile = open(filename, 'r')
-    sqlFile = infile.read()
-    infile.close()
+    fd = open(filename, 'r')
+    sqlFile = fd.read()
+    fd.close()
 
     # all SQL commands (split on ';')
     sqlCommands = sqlFile.split(';')
@@ -19,15 +20,6 @@ def executeScriptsFromFile(filename):
         # For example, if the tables do not yet exist, this will skip over
         # the DROP TABLE commands
         try:
-            cur.execute(command)
-        except Exception:
-            print "Command skipped: ",
-            
-def listShapefiles(mypath, shapefiles):
-    for filename in os.listdir(mypath):
-        if filename.endswith(".shp"):
-            filepath = mypath + '/' + filename
-            shapefiles.append(filepath)
-            
-
-            
+            con.cursor().execute(command)
+        except OperationalError, msg:
+            print "Command skipped: ", msg

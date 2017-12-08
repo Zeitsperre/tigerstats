@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 """
-This is a definition file for connecting to postgresql via psycopg2. This is adapted from its official documentation. 
+Example adapted from the official PostgreSQL Wiki
+https://wiki.postgresql.org/wiki/Using_psycopg2_with_PostgreSQL
 """
 
 import psycopg2 as pg2
