@@ -8,7 +8,7 @@
 DROP TABLE IF EXISTS analysis;
 SELECT name, gid, state, county, lsad_trans lsad, area, perimeter, st_transform(geom, 5070) geom 
 INTO analysis
-FROM counties2000
+FROM counties_2000
 WHERE state < '60';
 
 DROP TABLE IF EXISTS raf;
@@ -142,7 +142,7 @@ SELECT
 	hulls.convexhull_area AS convexhull_area,
 	hulls.convexhull_area_ratio AS convexhull_ratio,
 	analysis.geom AS geom
-INTO counties2000_metrics
+INTO counties_2000_metrics
 FROM (((((
 	analysis INNER JOIN raf ON analysis.gid=raf.gid)
 	INNER JOIN circle_boundary ON analysis.gid=circle_boundary.gid) 
