@@ -17,8 +17,7 @@ def psql_analysis(script):
             "dbname": dbname,
             "user": user,
             "passwd": passwd
-            }
-    )
+                            })
 
     conn_string = "host='localhost' dbname='%(dbname)s' user='%(user)s' password='%(passwd)s'" % (cred)
     # print the connection string we will use to connect

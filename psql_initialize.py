@@ -9,8 +9,8 @@ def include(script):
     if os.path.exists(script): 
         execfile(script)
 
-def listShapefiles(args):
-    filepath=[]
+def getShapefiles(args):
+    filepath = []
     for filename in os.listdir(args):
         if filename.endswith(".shp"):
             shapefile = args + '/' + filename
@@ -34,31 +34,35 @@ def psqlInitialize():
 
     mypath = os.path.dirname(os.path.realpath( __file__ )) + "/data"
     shapefiles = []
-    shapefiles.append(listShapefiles(mypath))
+    shapefiles = getShapefiles(mypath)
 
     print("The following shapefiles have been read from the working directory")
-    print(shapefiles)
+    for shape in shapefiles:
+        print(shape)
+    else:
+        print("All shapefiles loaded. Continuing...")
 
     cred={}
     cred.update(psqlCredentials(cred))
-    createdb = str("host = 'localhost', user='{user}', password='{passwd}'").format(**cred)
+    createdb = str("host='localhost' dbname='postgres' user='{user}' password='{passwd}'").format(**cred)
     print(createdb)
 
     initconn = pg2.connect(createdb)
     initconn.set_session(autocommit = True)
     setupcur = initconn.cursor()
     
-    setupcur.execute('DROP DATABASE psycopg2;')
+    setupcur.execute(str('DROP DATABASE IF EXISTS {dbname};').format(**cred))
 
     try:
-        setupcur.execute('CREATE DATABASE psycopg2;')
-        print ("CREATED DATABASE PSYCOPG2. Continuing...")
+        setupcur.execute(str('CREATE DATABASE {dbname};').format(**cred))
+        print (str("CREATED or REPLACED DATABASE {dbname}. Continuing...").format(**cred))
     except Exception:
-        print("DATABASE PSYCOPG2 already exists. Continuing...")
+        print(str("DATABASE {dname} already exists. Continuing...").format(**cred))
         pass
     initconn.close()
 
-    createPGIS = "host = 'localhost', dbname = '{dbname}', user='{user}', password='{passwd}'".format(**cred)
+    createPGIS = "host='localhost' dbname='{dbname}' user='{user}' password='{passwd}'".format(**cred)
+    print(createPGIS)
     conn = pg2.connect(createPGIS)
     conn.set_session(autocommit = True)
     cur = conn.cursor()
@@ -67,7 +71,7 @@ def psqlInitialize():
         cur.execute('CREATE EXTENSION postgis;')
         print("CREATED EXTENSION POSTGIS. Continuing...")
     except Exception:
-        print("EXTENSION POSTGIS already exists. Continuing...")
+        print("EXTENSION POSTGIS failed to build. Continuing...")
         pass
 
     #cur.execute('SELECT st_centroid(geom) FROM counties')
