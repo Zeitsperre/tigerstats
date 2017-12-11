@@ -9,7 +9,7 @@ def include(script):
     if os.path.exists(script): 
         execfile(script)
 
-def getShapefiles(args):
+def findShapefiles(args):
     filepath = []
     for filename in os.listdir(args):
         if filename.endswith(".shp"):
@@ -18,6 +18,7 @@ def getShapefiles(args):
     return filepath
 
 def psqlCredentials(args):
+    print("Enter credentials needed to create the database")
     dbname = str(raw_input('Enter Database Name: '))
     user = str(raw_input('Enter Postgres Username: '))
     passwd = str(getpass.getpass('Enter Password: '))
@@ -32,15 +33,17 @@ def psqlInitialize():
     include('exec_file.py')
     include('psycopg2_connection.py')
 
-    mypath = os.path.dirname(os.path.realpath( __file__ )) + "/data"
+    datapath = os.path.dirname(os.path.realpath( __file__ )) + "/data"
     shapefiles = []
-    shapefiles = getShapefiles(mypath)
+    shapefiles = findShapefiles(datapath)
 
     print("The following shapefiles have been read from the working directory")
-    for shape in shapefiles:
-        print(shape)
-    else:
-        print("All shapefiles loaded. Continuing...")
+    try:
+        for shape in shapefiles:
+            print(shape)
+        print("All shapefiles loaded. Continuing...\n")
+    except:
+        print("No shapefiles found. Continuing...\n")
 
     cred={}
     cred.update(psqlCredentials(cred))

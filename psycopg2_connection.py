@@ -10,6 +10,7 @@ import pprint
 import getpass
 
 def psql_analysis(script):
+    print("Enter credentials needed to run analysis")
     dbname = str(raw_input('Enter Database Name: '))
     user = str(raw_input('Enter Postgres Username: '))
     passwd = str(getpass.getpass('Enter Password: '))
@@ -33,13 +34,15 @@ def psql_analysis(script):
     try:
         cursor.execute(script)
     except ValueError:
-        print("Script failed to run")
+        print("Script failed to run. Continuing...")
+        pass
  
     # retrieve the records from the database
     try: 
         records = cursor.fetchone()
     except ValueError:
-        print("No values to return")
+        print("No values to return. Continuing...")
+        pass
     # print out the records using pretty print
     # note that the NAMES of the columns are not shown, instead just indexes.
     # for most people this isn't very useful so we'll show you how to return
