@@ -114,13 +114,13 @@ WHERE st_XMax(geom) < 4000000;
 
 --Query 6: Append all metrics to a new geometry table with standard counties geometries
 
-DROP TABLE IF EXISTS county_metrics;
+DROP TABLE IF EXISTS counties_2010_metrics;
 
 SELECT 
 	analysis.name AS name,
 	analysis.gid AS gid,
 	analysis.state AS state,
-	analysis.countyfp AS county,
+	analysis.county AS county,
 	analysis.lsad AS lsad, 
 	analysis.area AS area,
 	raf.calc_area AS calc_area,

@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS analysis;
 SELECT name, gid, st state, co county, area, perimeter, st_transform(geom, 5070) geom 
 INTO analysis
 FROM counties_1990
-WHERE state < '60';
+WHERE st < '60';
 
 DROP TABLE IF EXISTS raf;
 DROP TABLE IF EXISTS circle_boundary;
@@ -120,7 +120,7 @@ SELECT
 	analysis.name AS name,
 	analysis.gid AS gid,
 	analysis.state AS state,
-	analysis.countyfp AS county,
+	analysis.county AS county,
 	analysis.area AS area,
 	analysis.perimeter AS perimeter,
 	raf.calc_area AS calc_area,

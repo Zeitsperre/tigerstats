@@ -125,7 +125,7 @@ SELECT
 	analysis.name AS name,
 	analysis.gid AS gid,
 	analysis.state AS state,
-	analysis.countyfp AS county,
+	analysis.county AS county,
 	analysis.lsad AS lsad, 
 	analysis.area AS area,
 	analysis.perimeter AS perimeter,

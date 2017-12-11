@@ -119,7 +119,7 @@ WHERE st_XMax(geom) < 4000000;
 
 --Query 6: Append all metrics to a new geometry table with standard counties geometries
 
-DROP TABLE IF EXISTS places2010_metrics;
+DROP TABLE IF EXISTS places_2000_metrics;
 
 SELECT 
 	analysis.name AS name,
